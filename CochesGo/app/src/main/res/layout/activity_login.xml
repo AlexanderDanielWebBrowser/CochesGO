@@ -33,6 +33,13 @@
         android:inputType="textPassword"
         android:hint="Password"/>
 
+    <CheckBox
+        android:id="@+id/recordar"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="4"
+        android:text="Remember Login" />
+
     <Button
         android:id="@+id/login"
         android:layout_width="match_parent"

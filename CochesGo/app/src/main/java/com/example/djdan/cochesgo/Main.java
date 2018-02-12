@@ -27,8 +27,6 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        System.out.println(Sesion.getUser());
-
         mDrawerLayout = findViewById(R.id.drawer);
 
         NavigationView navigationView = findViewById(R.id.navView);
@@ -73,6 +71,8 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
                 Intent intent = new Intent(Main.this, Login.class);
                 Sesion.setUser(null);
                 startActivity(intent);
+                Login.editor.remove("savedUser");
+                Login.editor.commit();
                 Main.this.finish();
         }
 

@@ -2,18 +2,19 @@ package com.example.djdan.cochesgo;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,9 +32,13 @@ public class Login extends AppCompatActivity {
     //Parametros para el servidor
     public static final int CONNECTION_TIMEOUT = 10000; //Tiempo de espera para el servidor
     public static final int READ_TIMEOUT = 15000; //Tiempo de espera de respuesta para el servidor
+    //Variables para guardar la sesion
+    public static SharedPreferences pref; // 0 - for private mode
+    public  static SharedPreferences.Editor editor;
     private EditText etUsuario; //Campo usuario
     private EditText etPasswd; //Campo password
     private String usuario, email, passwd; //String con el texto de los campos
+    private CheckBox guardarSesion;
     private JSONObject userJSON; //Objeto JSON que nos devuelve PHP para pasarlo a la sesion y poder utilizarlo en la app
 
     @Override
@@ -41,15 +46,35 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        pref = getApplicationContext().getSharedPreferences("Sesion", 0);
+        editor = pref.edit();
+
         //Declaramos los campos de texto
         etUsuario = (EditText) findViewById(R.id.usuario);
         etPasswd = (EditText) findViewById(R.id.passwd);
+
+        guardarSesion = (CheckBox) findViewById(R.id.recordar);
+        String savedUser = pref.getString("savedUser", "0");
+        System.out.println("INICIO "+savedUser);
+
+        if (savedUser != null) {
+            try {
+                userJSON = new JSONObject(savedUser);
+
+                new AsyncLogin().execute(userJSON.getString("username"), userJSON.getString("email"), userJSON.getString("passwd"));
+
+            } catch (JSONException e) {
+                //Esta excepcion salta al no haber guardado el usuario, no nos interesa que se diga nada en ella
+            }
+
+        }
 
         //Declaramos el boton de login con su OnClick
         Button btnLogin = (Button) findViewById(R.id.login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //Rellenamos las variables con los campos
                 usuario = etUsuario.getText().toString();
                 email = etUsuario.getText().toString();
@@ -161,7 +186,6 @@ public class Login extends AppCompatActivity {
 
                 //Si no puede escribir salta excepcion y retornamos el error para el Toast final
             } catch (IOException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
                 return "Error IOW";
             }
@@ -215,8 +239,8 @@ public class Login extends AppCompatActivity {
             pdLoading.dismiss();
 
             //Cuando el result es true, se ha logueado correctamente
-            if (result.charAt(0)=='{') {
-System.out.println(result);
+            if (result.charAt(0) == '{') {
+
                 //Lanza la activity success
                 Intent intent = new Intent(Login.this, Success.class);
                 startActivity(intent);
@@ -228,6 +252,12 @@ System.out.println(result);
                     Toast.makeText(Login.this, e.toString(), Toast.LENGTH_LONG).show();
                 }
                 Sesion.setUser(userJSON);
+
+                if (guardarSesion.isChecked()) {
+                    editor.putString("savedUser", userJSON.toString());
+                    editor.commit();
+                }
+
                 //y finaliza esta activity
                 Login.this.finish();
 

@@ -1,5 +1,7 @@
 package com.example.djdan.cochesgo;
 
+import android.content.SharedPreferences;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,13 +40,6 @@ public class Sesion {
         }
     }
 
-    public static void guardaSesion(){
-        //TODO escribir en un fichero binario el objeto json
-    }
-
-    public static void borrarSesion(){
-        //TODO borrar el fichero binario del json con el usuario
-    }
 }
 
 
