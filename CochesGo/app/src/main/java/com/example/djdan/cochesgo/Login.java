@@ -55,7 +55,6 @@ public class Login extends AppCompatActivity {
 
         guardarSesion = (CheckBox) findViewById(R.id.recordar);
         String savedUser = pref.getString("savedUser", "0");
-        System.out.println("INICIO "+savedUser);
 
         if (savedUser != null) {
             try {

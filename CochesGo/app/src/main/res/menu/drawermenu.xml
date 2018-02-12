@@ -3,7 +3,7 @@
 
     <item android:id="@+id/dashBoard" android:title="Home" android:icon="@drawable/ic_dashboard_black_24dp"/>
     <item android:id="@+id/search" android:title="Search" android:icon="@drawable/ic_youtube_searched_for_black_24dp"/>
-    <item android:id="@+id/activities" android:title="Profile" android:icon="@drawable/ic_account_circle_black_24dp"/>
+    <item android:id="@+id/profile" android:title="Profile" android:icon="@drawable/ic_account_circle_black_24dp"/>
     <item android:id="@+id/settings" android:title="Settings" android:icon="@drawable/ic_settings_black_24dp"/>
     <item android:id="@+id/logout" android:title="Logout" android:icon="@drawable/ic_exit_to_app_black_24dp"/>
 
