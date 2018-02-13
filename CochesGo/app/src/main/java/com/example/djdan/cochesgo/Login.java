@@ -142,7 +142,7 @@ public class Login extends AppCompatActivity {
         protected String doInBackground(String... params) {
             try {
                 // URL del servidor donde se aloja el php
-                url = new URL("http://192.168.1.108/pruebacochesgo/login.inc.php");
+                url = new URL("http://192.168.1.108/pruebacochesgo/login.php");
 
                 //Si no conecta salta excepcion y retorna el error para el Toast final
             } catch (MalformedURLException e) {
@@ -238,7 +238,7 @@ public class Login extends AppCompatActivity {
             //Quita el progressDialog de la pantalla
             pdLoading.dismiss();
 
-            //Cuando el result es true, se ha logueado correctamente
+            //Cuando el result es { es que nos devuelve el userJSON con lo cual se ha logueado correctamente
             if (result.charAt(0) == '{') {
 
                 //Lanza la activity success

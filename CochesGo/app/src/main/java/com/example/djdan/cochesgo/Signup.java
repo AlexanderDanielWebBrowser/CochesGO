@@ -88,7 +88,7 @@ public class Signup extends AppCompatActivity {
         protected String doInBackground(String... params) {
             try {
                 // Enter URL address where your php file resides
-                url = new URL("http://192.168.1.108/pruebacochesgo/register.inc.php");
+                url = new URL("http://192.168.1.108/pruebacochesgo/register.php");
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -174,14 +174,14 @@ public class Signup extends AppCompatActivity {
                 /* Here launching another activity when login successful. If you persist login state
                 use sharedPreferences of Android. and logout button to clear sharedPreferences.
                  */
-
+                Toast.makeText(Signup.this, "Comprueba tu email para verificar la cuenta", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Signup.this, Login.class);
                 startActivity(intent);
                 Signup.this.finish();
 
             } else if (result.equalsIgnoreCase("false")) {
 
-                Toast.makeText(Signup.this, "Email Invalido", Toast.LENGTH_LONG).show();
+                Toast.makeText(Signup.this, "Usuario o Email ya existen.", Toast.LENGTH_LONG).show();
 
             } else {
 
