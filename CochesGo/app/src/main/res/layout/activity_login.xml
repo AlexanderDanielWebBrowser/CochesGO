@@ -12,7 +12,7 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="207dp"
-        android:layout_weight="4"
+        android:layout_weight="3"
         app:srcCompat="@drawable/boceto3" />
 
     <EditText
@@ -39,6 +39,20 @@
         android:layout_height="10dp"
         android:layout_weight="4"
         android:text="Remember Login" />
+
+    <TextView
+        android:id="@+id/olvidePasswd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autoLink="none"
+        android:clickable="true"
+        android:linksClickable="false"
+        android:text="Forgot Password?"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/login"

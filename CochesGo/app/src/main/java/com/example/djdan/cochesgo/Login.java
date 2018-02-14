@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -39,6 +40,7 @@ public class Login extends AppCompatActivity {
     private EditText etPasswd; //Campo password
     private String usuario, email, passwd; //String con el texto de los campos
     private CheckBox guardarSesion;
+    private TextView olvidePasswd;
     private JSONObject userJSON; //Objeto JSON que nos devuelve PHP para pasarlo a la sesion y poder utilizarlo en la app
 
     @Override
@@ -108,6 +110,34 @@ public class Login extends AppCompatActivity {
                 //Lanza la actividad del SignUp
                 Intent intent = new Intent(Login.this, Signup.class);
                 startActivity(intent);
+            }
+        });
+
+        olvidePasswd=findViewById(R.id.olvidePasswd);
+        olvidePasswd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Rellenamos las variables con los campos
+                usuario = etUsuario.getText().toString();
+                email = etUsuario.getText().toString();
+                String passwdSIN = Validaciones.passwdAleatoria();
+
+                //Validamos usuario y correo, si pasa
+                if (Validaciones.validarUsuario(usuario) || Validaciones.validarEmail(usuario)) {
+                    //Validamos la password
+                    if (Validaciones.validarPassword(passwdSIN)) {
+                        //Encriptamos la password con SHA256 antes de mandarla al servidor
+                        passwd = Validaciones.psswdSHA256(passwdSIN);
+                        // Iniciamos el Login como Asincrono pasando user, email y password
+                        new AsyncOlvide().execute(usuario, email, passwdSIN, passwd);
+                    } else {
+                        //Si no valida password
+                        Toast.makeText(Login.this, "Contraseña inválida", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    //Si no valida email o usuario
+                    Toast.makeText(Login.this, "Usuario o Email inválido", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -275,4 +305,151 @@ public class Login extends AppCompatActivity {
         }
 
     }
+
+    //TAREA ASINCRONA DEL RECORDAR LA PASSWD
+    private class AsyncOlvide extends AsyncTask<String, String, String> {
+
+        //Crea un dialogo de progreso
+        ProgressDialog pdLoading = new ProgressDialog(Login.this);
+
+        //Declaramos la conexion y la url
+        HttpURLConnection conn;
+        URL url = null;
+
+        //Metodo que se ejecuta ANTES que el hilo en background y se ejecuta en el mismo hilo que la Interfaz
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //Pone un mensaje al dialogo del progreso
+            pdLoading.setMessage("\tEnviando Password...");
+            //Hace que no se pueda quitar
+            pdLoading.setCancelable(false);
+            //y lo muestra
+            pdLoading.show();
+
+        }
+
+        //Funcion que se ejecuta en un hilo en Background
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                // URL del servidor donde se aloja el php
+                url = new URL("http://192.168.1.108/pruebacochesgo/olvidePasswd.php");
+
+                //Si no conecta salta excepcion y retorna el error para el Toast final
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return "Imposible conectar con el servidor";
+            }
+            try {
+                // Establecemos la conexino abriendo la URL
+                conn = (HttpURLConnection) url.openConnection();
+                //Establecemos el tiempo de respuesta maximo
+                conn.setReadTimeout(READ_TIMEOUT);
+                //Establedemos el tiempo de espera maximo
+                conn.setConnectTimeout(CONNECTION_TIMEOUT);
+                //Establecemos el metodo POST
+                conn.setRequestMethod("POST");
+
+                // Establecemos a true la lectura y escritura al servidor
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                // Añadimos los parametros a una Uri
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("usuario", params[0])
+                        .appendQueryParameter("email", params[1])
+                        .appendQueryParameter("passwdSIN", params[2])
+                        .appendQueryParameter("passwd", params[3]);
+                //Pasamos a String la Uri con los parametros
+                String query = builder.build().getEncodedQuery();
+
+                // Cogemos el canal de la conexion por donde irán los datos
+                OutputStream os = conn.getOutputStream();
+                //Creamos el escritor pasando el canal donde escribirá y la codificacion
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                //Escribimos los parametros en la conexion
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+                //Finalmente conectamos
+                conn.connect();
+
+                //Si no puede escribir salta excepcion y retornamos el error para el Toast final
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                return "Error IOW";
+            }
+
+            try {
+                //Si fue bien, recogemos el codigo de respuesta del servidor (200 es OK cualquier otro es error)
+                int response_code = conn.getResponseCode();
+
+                // Comprobamos que el codigo de respuesta es OK, 200
+                if (response_code == HttpURLConnection.HTTP_OK) {
+
+                    // Cogemos el canal de la conexion por donde vendrán los datos
+                    InputStream input = conn.getInputStream();
+                    // Creamos el lector que se pondra en ese canal
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                    //Creamos la cadena del resultado, StringBuilder es un String que nos deja hacer mas cosas, en este caso concatenar lo que necesitamos
+                    StringBuilder result = new StringBuilder();
+                    //Creamos el String para el while
+                    String line;
+
+                    //Mientras el lector lea algo, se lo pasa a la linea
+                    while ((line = reader.readLine()) != null) {
+                        // y lo concatena al resultado
+                        result.append(line);
+                    }
+                    // Retornamos el resultado como String al PostExecute
+                    return (result.toString());
+
+                } else {
+                    // Si el servidor nos responde algo distinto de OK, retornamos error para el Toast final
+                    return ("Servidor no responde, Error: " + response_code);
+                }
+
+                //Si no puede leer salta excepcion y retornamos el error para el Toast final
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Error IOR";
+            } finally {
+                //Nos desconectamos del servidor
+                conn.disconnect();
+            }
+
+
+        }
+
+        //Este metodo se ejecuta DESPUES del hilo en background y corre en el mismo hilo que la Interfaz
+        @Override
+        protected void onPostExecute(String result) {
+
+            //Quita el progressDialog de la pantalla
+            pdLoading.dismiss();
+
+            //Cuando el result es { es que nos devuelve el userJSON con lo cual se ha logueado correctamente
+            if (result.equalsIgnoreCase("true")) {
+
+
+                    Toast.makeText(Login.this, "Se ha enviado una nueva contraseña al email", Toast.LENGTH_LONG).show();
+
+            } else if (result.equalsIgnoreCase("false")) {
+                // Mostramos un toast conforme no se ha podido loguear porque el user o pass son incorrectos
+                Toast.makeText(Login.this, "Usuario o Email no existe", Toast.LENGTH_LONG).show();
+
+                //Esto solo pasa cuando se ha lanzado una excepcion o error, no tiene que ver con el login
+            } else {
+                //Se muestra el error ocurrido en caso de que lo haya
+                Toast.makeText(Login.this, result, Toast.LENGTH_LONG).show();
+
+            }
+        }
+
+    }
+
 }

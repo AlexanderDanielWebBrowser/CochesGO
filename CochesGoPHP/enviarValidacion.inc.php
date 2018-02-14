@@ -9,7 +9,7 @@
         Your account has been created, you have activated your account by pressing the url below.
         
         Please click this link to activate your account:
-        http://www.yourwebsite.com/verificarEmail.inc.php?email='.$email.'&hash='.$hash.'
+        http://www.yourwebsite.com/verificarEmail.php?email='.$email.'&hash='.$hash.'
         
         '; // Our message above including the link
                             

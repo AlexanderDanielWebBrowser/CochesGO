@@ -49,4 +49,12 @@ public class Validaciones {
         }
         return encryptedPass.toString();
     }
+
+    public static String passwdAleatoria() {
+        String r = "";
+        for(int i = 0; i < 6; i++) {
+            r += (char)(Math.random() * 26 + 97);
+        }
+        return r;
+    }
 }
