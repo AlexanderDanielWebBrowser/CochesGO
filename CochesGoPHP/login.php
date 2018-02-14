@@ -22,7 +22,7 @@
           $result=$stmt->fetch(PDO::FETCH_ASSOC);
           
           if($result['activo']==1){
-            if($result['username']==$usuario)
+            if($result['username']==$usuario || $result['email']==$email)
           {
             $sql='UPDATE usuarios SET ultimaVez=CURRENT_TIMESTAMP WHERE username=:usuario';
             $stmt = $conn->prepare($sql);
@@ -32,7 +32,7 @@
             $userJSON = json_encode($result);
             echo $userJSON;        
             }  
-            elseif($result['username']!=$usuario)
+            elseif($result['username']!=$usuario || $result['email']!=$email)
             {
               echo "false";
             }

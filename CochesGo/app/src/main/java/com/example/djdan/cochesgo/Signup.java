@@ -88,7 +88,7 @@ public class Signup extends AppCompatActivity {
         protected String doInBackground(String... params) {
             try {
                 // Enter URL address where your php file resides
-                url = new URL("http://192.168.1.108/pruebacochesgo/register.php");
+                url = new URL("http://pruebacochesgo.000webhostapp.com/register.php");
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();

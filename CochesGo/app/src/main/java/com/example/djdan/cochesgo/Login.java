@@ -118,25 +118,24 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Rellenamos las variables con los campos
-                usuario = etUsuario.getText().toString();
                 email = etUsuario.getText().toString();
                 String passwdSIN = Validaciones.passwdAleatoria();
 
                 //Validamos usuario y correo, si pasa
-                if (Validaciones.validarUsuario(usuario) || Validaciones.validarEmail(usuario)) {
+                if (Validaciones.validarEmail(email)) {
                     //Validamos la password
                     if (Validaciones.validarPassword(passwdSIN)) {
                         //Encriptamos la password con SHA256 antes de mandarla al servidor
                         passwd = Validaciones.psswdSHA256(passwdSIN);
                         // Iniciamos el Login como Asincrono pasando user, email y password
-                        new AsyncOlvide().execute(usuario, email, passwdSIN, passwd);
+                        new AsyncOlvide().execute(email, passwdSIN, passwd);
                     } else {
                         //Si no valida password
                         Toast.makeText(Login.this, "Contraseña inválida", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     //Si no valida email o usuario
-                    Toast.makeText(Login.this, "Usuario o Email inválido", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Email inválido", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -172,7 +171,7 @@ public class Login extends AppCompatActivity {
         protected String doInBackground(String... params) {
             try {
                 // URL del servidor donde se aloja el php
-                url = new URL("http://192.168.1.108/pruebacochesgo/login.php");
+                url = new URL("http://pruebacochesgo.000webhostapp.com/login.php");
 
                 //Si no conecta salta excepcion y retorna el error para el Toast final
             } catch (MalformedURLException e) {
@@ -335,7 +334,7 @@ public class Login extends AppCompatActivity {
         protected String doInBackground(String... params) {
             try {
                 // URL del servidor donde se aloja el php
-                url = new URL("http://192.168.1.108/pruebacochesgo/olvidePasswd.php");
+                url = new URL("http://pruebacochesgo.000webhostapp.com/olvidePasswd.php");
 
                 //Si no conecta salta excepcion y retorna el error para el Toast final
             } catch (MalformedURLException e) {
@@ -358,10 +357,9 @@ public class Login extends AppCompatActivity {
 
                 // Añadimos los parametros a una Uri
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("usuario", params[0])
-                        .appendQueryParameter("email", params[1])
-                        .appendQueryParameter("passwdSIN", params[2])
-                        .appendQueryParameter("passwd", params[3]);
+                        .appendQueryParameter("email", params[0])
+                        .appendQueryParameter("passwdSIN", params[1])
+                        .appendQueryParameter("passwd", params[2]);
                 //Pasamos a String la Uri con los parametros
                 String query = builder.build().getEncodedQuery();
 
