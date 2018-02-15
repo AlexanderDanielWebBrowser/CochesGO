@@ -21,25 +21,27 @@
           $stmt->execute();
           $result=$stmt->fetch(PDO::FETCH_ASSOC);
           
-          if($result['activo']==1){
-            if($result['username']==$usuario || $result['email']==$email)
+          if($result['username']==$usuario || $result['email']==$email)
           {
-            $sql='UPDATE usuarios SET ultimaVez=CURRENT_TIMESTAMP WHERE username=:usuario';
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR);
-            $stmt->execute();
-
-            $userJSON = json_encode($result);
-            echo $userJSON;        
-            }  
-            elseif($result['username']!=$usuario || $result['email']!=$email)
-            {
-              echo "false";
+            if($result['activo']==0){
+              echo "Verifica tu cuenta para continuar";
             }
+            else{
+              $sql='UPDATE usuarios SET ultimaVez=CURRENT_TIMESTAMP WHERE username=:usuario';
+              $stmt = $conn->prepare($sql);
+              $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+              $stmt->execute();
+
+              $userJSON = json_encode($result);
+              echo $userJSON;        
+            }  
           }
-          else{
-            echo "Verifica tu cuenta para continuar";
+          elseif($result['username']!=$usuario || $result['email']!=$email)
+          {
+            echo "false";
           }
+          
+          
 
   	} else {
       echo "No hay Params.";
