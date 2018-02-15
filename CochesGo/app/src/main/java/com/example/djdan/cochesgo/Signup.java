@@ -125,7 +125,7 @@ public class Signup extends AppCompatActivity {
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
-                return "Error IO";
+                return "Error IOE";
             }
 
             try {
@@ -155,7 +155,7 @@ public class Signup extends AppCompatActivity {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                return "Error IO";
+                return "Error IOL";
             } finally {
                 conn.disconnect();
             }
