@@ -38,7 +38,7 @@ def report(annotations):
             #Quiere decir que encontro la primera coincidencia del coche con la puntuacion mas alta
             #Es necesario todo esto debido a un bug que a veces no ordena adecuadamente las coincidencias y no siempre la primera es la buena
             if (s in entity.description):
-                print(entity.description)
+                return entity.description
                 a=1
             if (a==1):
                 break
@@ -47,12 +47,12 @@ def report(annotations):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-    path_help = str('The image to detect, can be web URI, '
-                    'Google Cloud Storage, or path to local file.')
-    parser.add_argument('image_url', help=path_help)
-    args = parser.parse_args()
+    #parser = argparse.ArgumentParser(
+    #    description=__doc__,
+    #    formatter_class=argparse.RawDescriptionHelpFormatter)
+    #path_help = str('The image to detect, can be web URI, '
+    #                'Google Cloud Storage, or path to local file.')
+    #parser.add_argument('image_url', help=path_help)
+    #args = parser.parse_args()
 
-    report(annotate(args.image_url))
+    print(report(annotate("coche.jpg")))
