@@ -26,7 +26,7 @@ def annotate(path):
 
 def report(annotations):
     #Lista de marcas (las sacamos de mysql)
-    list=["Rolls", "Peugeot", "Citroën"]
+    list=["Rolls", "Peugeot", "Citroën", "Renault"]
     #Flag para cuando el coche se encuentra
     a=0
 
@@ -55,4 +55,4 @@ if __name__ == '__main__':
     #parser.add_argument('image_url', help=path_help)
     #args = parser.parse_args()
 
-    print(report(annotate("coche.jpg")))
+    print(report(annotate("a.jpg")))
